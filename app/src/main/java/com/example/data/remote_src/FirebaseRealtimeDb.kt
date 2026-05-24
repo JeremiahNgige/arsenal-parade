@@ -16,7 +16,6 @@ class FirebaseRealtimeDb {
     // Simulated Realtime Database registers
     private val mockPins = mutableListOf<ParadePinDto>()
     private val mockPosts = mutableListOf<CelebrationPostDto>()
-    private val mockTracks = mutableListOf<MusicTrackDto>()
 
     // Flows representing Realtime subscriptions
     private val _pinsFlow = MutableSharedFlow<List<ParadePinDto>>(replay = 1)
@@ -26,18 +25,6 @@ class FirebaseRealtimeDb {
     val postsFlow: SharedFlow<List<CelebrationPostDto>> = _postsFlow
 
     init {
-        // Pre-configure tracks
-        mockTracks.addAll(
-            listOf(
-                MusicTrackDto("track_1", "North London Forever", "Louis Dunford", "", 240),
-                MusicTrackDto("track_2", "Super Mik Arteta", "Ashburton Army Chant", "", 120),
-                MusicTrackDto("track_3", "We Love You Arsenal", "Gunners Stadium Hymn", "", 150),
-                MusicTrackDto("track_4", "Saka & Emile Smith Rowe", "To the tune of 'Rockin All Over The World'", "", 95),
-                MusicTrackDto("track_5", "Bukayo Saka Song", "Saka-La-La-La", "", 110),
-                MusicTrackDto("track_6", "Waka Waka (Kai Havertz)", "60 Million Down the Drain", "", 130)
-            )
-        )
-
         // Pre-configure initial global celebratory parade epicenters
         mockPins.addAll(
             listOf(
@@ -153,8 +140,22 @@ class FirebaseRealtimeDb {
         }
     }
 
-    fun getAllMusicTracks(): List<MusicTrackDto> {
-        return mockTracks
+    suspend fun getAllMusicTracks(): List<MusicTrackDto> {
+        return try {
+            val response = ITunesApi.service.search("Arsenal Chant", limit = 20)
+            response.results.map { track ->
+                MusicTrackDto(
+                    id = track.trackId.toString(),
+                    title = track.trackName ?: "Unknown Track",
+                    artist = track.artistName ?: "Unknown Artist",
+                    url = track.previewUrl ?: "",
+                    durationSeconds = (track.trackTimeMillis?.div(1000))?.toInt() ?: 30
+                )
+            }.filter { it.url.isNotEmpty() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     suspend fun createPin(dto: ParadePinDto): ParadePinDto {
