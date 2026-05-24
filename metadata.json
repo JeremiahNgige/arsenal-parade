@@ -1,0 +1,6 @@
+{
+  "name": "Arsenal Parade",
+  "description": "Connect with Arsenal fans globally, share celebrations in real-time, capture local moments, and tune in to celebration tracks for today's historic trophy parade.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
