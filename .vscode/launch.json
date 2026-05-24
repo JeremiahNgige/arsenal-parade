@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "▶ Run on Device / Emulator",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "Build & Run (Device must be connected)",
+      "program": "${workspaceFolder}",
+      "runtimeExecutable": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "runtimeArgs": [
+        "shell", "am", "start",
+        "-n", "com.aistudio.arsenalparade.wqtpsm/.MainActivity"
+      ],
+      "console": "integratedTerminal",
+      "presentation": {
+        "hidden": false,
+        "group": "android",
+        "order": 1
+      }
+    },
+    {
+      "name": "🛠 Build Debug APK Only",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "Build Debug APK",
+      "program": "${workspaceFolder}",
+      "runtimeExecutable": "echo",
+      "runtimeArgs": ["Build complete. APK at: app/build/outputs/apk/debug/app-debug.apk"],
+      "console": "integratedTerminal",
+      "presentation": {
+        "hidden": false,
+        "group": "android",
+        "order": 2
+      }
+    }
+  ]
+}

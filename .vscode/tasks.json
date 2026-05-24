@@ -1,0 +1,87 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Emulator (Pixel 8 Pro)",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/emulator/emulator",
+      "args": ["-avd", "Pixel_8_Pro_API_34", "-no-snapshot-save"],
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "boot completed"
+        }
+      },
+      "presentation": { "reveal": "silent", "panel": "dedicated" }
+    },
+    {
+      "label": "Wait for Device",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "args": ["wait-for-device", "shell", "while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done"],
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "Build Debug APK",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["assembleDebug"],
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install APK",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "args": [
+        "install", "-r",
+        "${workspaceFolder}/app/build/outputs/apk/debug/app-debug.apk"
+      ],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Launch App",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "args": [
+        "shell", "am", "start",
+        "-n", "com.aistudio.arsenalparade.wqtpsm/.MainActivity"
+      ],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build & Run (Device must be connected)",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Build Debug APK", "Install APK", "Launch App"],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "View Logcat (App only)",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "args": [
+        "logcat",
+        "--pid=$(adb shell pidof com.aistudio.arsenalparade.wqtpsm)"
+      ],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Uninstall App",
+      "type": "shell",
+      "command": "/Users/mac/Library/Android/sdk/platform-tools/adb",
+      "args": ["uninstall", "com.aistudio.arsenalparade.wqtpsm"],
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}
